@@ -114,6 +114,7 @@ public class DeRevolutionibus {
 
                     }
                 }
+				//Dokonczyc dla innych dni
                 else {
 
 
