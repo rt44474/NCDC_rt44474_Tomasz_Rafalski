@@ -10,6 +10,34 @@ public class DeRevolutionibus {
         int decimals = tmp.length() -  integers -1;
         return decimals;
     }
+    public static double[] calculate_X(double radius, double rate,double time,double x0){
+        rate = time/rate;
+        double r = rate - (long) rate;
+        double x = radius*Math.cos((2*rate*Math.PI*time) + Math.PI)+x0;
+        double y = radius*Math.sin((2*rate*Math.PI*time) + Math.PI)+x0;
+        if (r>0.25 && r < 0.75) {
+            if (x < 0) {
+                x = -x;
+            }
+        }
+        else {
+            if (x > 0){
+                x = -x;
+            }
+        }
+        if (r > 0 && r < 0.5) {
+            if(y > 0){
+                y = -y;
+            }
+        }
+        else{
+            if(y<0){
+                y = -y;
+            }
+        }
+        double[] xy={x,y};
+        return xy;
+    }
     public static int revolutionibus(String[] args){
         //Sprawdzanie czy to double
         if(args.length==1){
@@ -44,12 +72,16 @@ public class DeRevolutionibus {
             //Sprawdzanie czy dzien jest wiekszy niz 1
             if (dzien >= 0) {
                 Scanner input = new Scanner(System.in);
-                while (input.hasNextLine()) {
-                    String tmp;
-                    tmp = input.nextLine();
+                String tmp;
 
+                while (input.hasNextLine()) {
+                    tmp = input.nextLine();
                     //Dzielenie Stringa na czesci
                     temp = tmp.split(",");
+                    if(temp.length!=3){
+                        System.out.println("klops");
+                        return 0;
+                    }
                     nazwy.add(temp[0]);
                     //Liczenie miejsc po przecinku
                     check = count_decimals(Double.parseDouble(temp[1]));
@@ -93,6 +125,8 @@ public class DeRevolutionibus {
                 List<Double> copy_p=new ArrayList<Double>();
                 List<Double> copy_c=new ArrayList<Double>();
                 List<String> copy_n= new ArrayList<String>();
+                List<Double> list_x=new ArrayList<Double>();
+                List<Double> list_y=new ArrayList<Double>();
                 copy_p.addAll(promien);
                 Collections.sort(copy_p,Collections.reverseOrder());
                 for(int i =0;i<promien.size();i++){
@@ -100,9 +134,6 @@ public class DeRevolutionibus {
                     copy_c.add(czas.get(idx));
                     copy_n.add(nazwy.get(idx));
                 }
-                //System.out.println(copy_n);
-                //System.out.println(copy_c);
-                //System.out.println(copy_p);
                 if (dzien == 0) {
                     for(int i =0;i<copy_n.size();i++){
                         if (i == 0){
@@ -114,23 +145,73 @@ public class DeRevolutionibus {
 
                     }
                 }
-				//Dokonczyc dla innych dni
                 else {
-
-
-
+                    double[] x;
+                    for (int i= 0;i<copy_n.size();i++){
+                        if (i == copy_n.size()-1){
+                            //System.out.println(copy_c.get(i));
+                            list_x.add(0.0);
+                            list_y.add(0.0);
+                            break;
+                        }
+                        x = calculate_X(copy_p.get(i),copy_c.get(i),dzien,0.0);
+                        list_x.add(x[0]);
+                        list_y.add(x[1]);
+                    }
+                    //Sortowanie po wspolrzednych x
+                    List<Double> copy_x=new ArrayList<Double>();
+                    List<Double> copy_y=new ArrayList<Double>();
+                    copy_x.addAll(list_x);
+                    Collections.sort(copy_x);
+                    promien.clear();
+                    nazwy.clear();
+                    czas.clear();
+                    for (int i =0;i<copy_n.size();i++){
+                        idx = list_x.indexOf(copy_x.get(i));
+                        copy_y.add(list_y.get(idx));
+                        promien.add(copy_p.get(idx));
+                        nazwy.add(copy_n.get(idx));
+                        czas.add(copy_c.get(idx));
+                    }
+                    List<String> output = new ArrayList<String>();
+                    output.addAll(nazwy);
+                    for (int i =0;i<copy_c.size();i++){
+                        double tmpx1 = Math.round(copy_x.get(i)*100.0)/100.0;
+                        double tmpy1 = copy_y.get(i);
+                        for (int j=0;j<copy_c.size();j++){
+                            if (i == j){
+                                continue;
+                            }
+                            double tmpx2 = Math.round(copy_x.get(j)*100.0)/100.0;
+                            double tmpy2 = copy_y.get(j);
+                            if (tmpx1 == tmpx2){
+                                if (tmpy1>tmpy2) {
+                                    if((output.contains(nazwy.get(i)))){
+                                        output.remove(nazwy.get(i));
+                                    }
+                                }
+                                else if(tmpy2>tmpy1){
+                                    if((output.contains(nazwy.get(j)))){
+                                        output.remove(nazwy.get(j));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for(int i =0;i<output.size();i++){
+                        if (i == output.size()-1){
+                            System.out.print(output.get(i));
+                        }
+                        else{
+                            System.out.print(output.get(i)+", ");
+                        }
+                    }
                 }
-
-
-
-
             }
             else{
                 System.out.println("klops");
                 return 0;
             }
-
-
         }
         else{
             System.out.println("klops");
