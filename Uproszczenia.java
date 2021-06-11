@@ -1,7 +1,16 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 public class Uproszczenia {
     public static int uproszczenia(String[] args){
         if (args.length == 1) {
             //String
+            Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
+            Matcher matcher = pattern.matcher(args[0]);
+            boolean checkforspecials = matcher.find();
+            if (checkforspecials) {
+                System.out.println("klops");
+                return 0;
+            }
             String part2 = args[0].replaceAll("[^A-Za-z]","");
             //Integer
             String part1 = args[0].replaceAll("[^0-9]","");
