@@ -11,31 +11,11 @@ public class DeRevolutionibus {
         return decimals;
     }
     public static double[] calculate_X(double radius, double rate,double time,double x0){
-        rate = time/rate;
-        double r = rate - (long) rate;
-        double x = radius*Math.cos((2*rate*Math.PI*time) + Math.PI)+x0;
-        double y = radius*Math.sin((2*rate*Math.PI*time) + Math.PI)+x0;
-        if (r>0.25 && r < 0.75) {
-            if (x < 0) {
-                x = -x;
-            }
-        }
-        else {
-            if (x > 0){
-                x = -x;
-            }
-        }
-        if (r > 0 && r < 0.5) {
-            if(y > 0){
-                y = -y;
-            }
-        }
-        else{
-            if(y<0){
-                y = -y;
-            }
-        }
+        //rate = time/rate;
+        double x = radius*Math.cos(2*time/rate*Math.PI + Math.PI)+x0;
+        double y = radius*Math.sin(2*time/rate*Math.PI + Math.PI)+x0;
         double[] xy={x,y};
+
         return xy;
     }
     public static int revolutionibus(String[] args){
@@ -157,6 +137,7 @@ public class DeRevolutionibus {
                         x = calculate_X(copy_p.get(i),copy_c.get(i),dzien,0.0);
                         list_x.add(x[0]);
                         list_y.add(x[1]);
+                        //System.out.println("Nazwa: "+copy_n.get(i)+" x: "+ x[0]+" y: "+x[1]);
                     }
                     //Sortowanie po wspolrzednych x
                     List<Double> copy_x=new ArrayList<Double>();
